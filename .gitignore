@@ -1,0 +1,40 @@
+﻿# Build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+artifacts/
+
+# Visual Studio
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Generated files
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+*.tmp
+
+# Package and tool directories
+packages/
+node_modules/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
+
+# Operating system files
+Thumbs.db
+.DS_Store

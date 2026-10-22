@@ -1,0 +1,74 @@
+<Window x:Class="BimTools.SpxExporter.Views.ProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:BimTools.SpxExporter.Models"
+        Title="{Binding Title}"
+        Width="900" Height="640" MinWidth="720" MinHeight="480"
+        WindowStartupLocation="CenterScreen"
+        Background="#F4F6F8" FontFamily="Segoe UI" FontSize="12">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Padding" Value="16,7" />
+            <Setter Property="Margin" Value="6,0,0,0" />
+            <Setter Property="MinWidth" Value="110" />
+        </Style>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding CurrentText}" FontSize="16" FontWeight="SemiBold" Foreground="#1F2A37" />
+
+        <StackPanel Grid.Row="1" Margin="0,8,0,10">
+            <ProgressBar Height="14" Minimum="0" Maximum="100" Value="{Binding Progress, Mode=OneWay}" />
+            <TextBlock Text="{Binding StatusText}" Margin="0,6,0,0" Foreground="#475467" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="True"
+                  HeadersVisibility="Column" GridLinesVisibility="Horizontal" CanUserAddRows="False"
+                  Background="White" BorderBrush="#D0D5DD" RowHeaderWidth="0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Model" Binding="{Binding FileName}" Width="2*" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="90">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ItemStatus.Success}">
+                                    <Setter Property="Foreground" Value="#067647" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ItemStatus.Failed}">
+                                    <Setter Property="Foreground" Value="#B42318" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="{x:Static models:ItemStatus.Running}">
+                                    <Setter Property="Foreground" Value="#175CD3" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Time" Binding="{Binding Duration}" Width="70" />
+                <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="3*" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <ListBox Grid.Row="3" Margin="0,10,0,0" ItemsSource="{Binding LogLines}" FontFamily="Consolas" FontSize="11"
+                 BorderBrush="#D0D5DD" ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Style="{StaticResource ActionButton}" Content="{Binding ContinueText}" Command="{Binding ContinueCommand}"
+                    Visibility="{Binding ShowContinue, Converter={StaticResource BoolToVis}}"
+                    ToolTip="Use when the SYNCHRO exporter has finished but no new SPX file was detected." />
+            <Button Style="{StaticResource ActionButton}" Content="Open report" Command="{Binding OpenReportCommand}" />
+            <Button Style="{StaticResource ActionButton}" Content="Open output folder" Command="{Binding OpenOutputCommand}" />
+            <Button Style="{StaticResource ActionButton}" Content="Cancel" Command="{Binding CancelCommand}" />
+            <Button Style="{StaticResource ActionButton}" Content="Close" Click="OnCloseClick" IsDefault="True" />
+        </StackPanel>
+    </Grid>
+</Window>

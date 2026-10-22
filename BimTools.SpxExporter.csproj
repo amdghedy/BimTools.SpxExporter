@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+    <RootNamespace>BimTools.SpxExporter</RootNamespace>
+    <AssemblyName>BimTools.SpxExporter</AssemblyName>
+    <Version>1.3.3</Version>
+    <Company>BIM TOOLS</Company>
+    <Product>BIM TOOLS SPX Exporter</Product>
+    <Copyright>Copyright (c) BIM TOOLS</Copyright>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <DebugType>embedded</DebugType>
+    <RevitInstallDir Condition="'$(RevitInstallDir)' == ''">C:\Program Files\Autodesk\Revit 2024\</RevitInstallDir>
+    <RevitAddinsDir Condition="'$(RevitAddinsDir)' == ''">$(ProgramData)\Autodesk\Revit\Addins\2024\</RevitAddinsDir>
+  </PropertyGroup>
+
+  <!-- Revit API: use the local Revit 2024 install when present... -->
+  <ItemGroup Condition="Exists('$(RevitInstallDir)RevitAPI.dll')">
+    <Reference Include="RevitAPI">
+      <HintPath>$(RevitInstallDir)RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(RevitInstallDir)RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- ...otherwise restore the Revit 2024 API assemblies from NuGet (Nice3point, source on GitHub). -->
+  <ItemGroup Condition="!Exists('$(RevitInstallDir)RevitAPI.dll')">
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="2024.*" ExcludeAssets="runtime" />
+    <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="2024.*" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="BimTools.SpxExporter.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Deploy to the Revit 2024 add-ins folder after every build (skipped if Revit has the DLL locked). -->
+  <Target Name="DeployToRevit" AfterTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
+    <ItemGroup>
+      <DeployBinaries Include="$(OutDir)BimTools.SpxExporter.dll" />
+      <DeployBinaries Include="$(OutDir)BimTools.SpxExporter.pdb" Condition="Exists('$(OutDir)BimTools.SpxExporter.pdb')" />
+    </ItemGroup>
+    <MakeDir Directories="$(RevitAddinsDir)BimTools.SpxExporter" ContinueOnError="true" />
+    <Copy SourceFiles="@(DeployBinaries)" DestinationFolder="$(RevitAddinsDir)BimTools.SpxExporter" ContinueOnError="true" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\BimTools.SpxExporter.addin" DestinationFolder="$(RevitAddinsDir)" ContinueOnError="true" />
+  </Target>
+
+</Project>

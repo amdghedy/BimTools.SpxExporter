@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>BIM TOOLS SPX Exporter</Name>
+    <Assembly>BimTools.SpxExporter\BimTools.SpxExporter.dll</Assembly>
+    <AddInId>6f3a1c52-8d47-4b0e-9a65-2c7e1d4f8b31</AddInId>
+    <FullClassName>BimTools.SpxExporter.Startup.SpxExporterApplication</FullClassName>
+    <VendorId>BIMT</VendorId>
+    <VendorDescription>BIM TOOLS</VendorDescription>
+  </AddIn>
+</RevitAddIns>
